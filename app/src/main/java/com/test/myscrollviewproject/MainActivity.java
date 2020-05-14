@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Scroller;
 
 public class MainActivity extends AppCompatActivity {
-
+    private String a="aaaccc";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
