@@ -140,16 +140,18 @@ public class SpringLayout extends ViewGroup implements NestedScrollingParent2 {
 
     @Override
     public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, @ViewCompat.NestedScrollType int type) {
+        boolean canScrollUp = ViewCompat.canScrollVertically(target, 1);
+        if (!canScrollUp&&type==ViewCompat.TYPE_NON_TOUCH) {
 
+        }
     }
-
     @Override
-    public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
+    public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
         boolean canScrollUp = ViewCompat.canScrollVertically(target, 1);
         if (!canScrollUp) {
-            startSpringScroll(velocityY);
+//            startSpringScroll(velocityY);
         }
-        return super.onNestedPreFling(target, velocityX, velocityY);
+        return super.onNestedFling(target, velocityX, velocityY, consumed);
     }
 
     private void startSpringScroll(float velocityY) {
@@ -167,12 +169,12 @@ public class SpringLayout extends ViewGroup implements NestedScrollingParent2 {
     }
 
     @Override
-    protected boolean dispatchHoverEvent(MotionEvent event) {
+    public boolean dispatchTouchEvent(MotionEvent ev) {
         if (velocityTracker == null) {
             velocityTracker = VelocityTracker.obtain();
         }
-        velocityTracker.addMovement(event);
-        return super.dispatchHoverEvent(event);
+        velocityTracker.addMovement(ev);
+        return super.dispatchTouchEvent(ev);
     }
 
     @Override

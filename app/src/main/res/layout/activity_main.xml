@@ -1,131 +1,187 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.test.myscrollviewproject.SpringLayout
+<com.test.myscrollviewproject.SpringLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/sl"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
-<android.support.v4.widget.NestedScrollView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
-    <LinearLayout
-        android:id="@+id/ll"
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_vertical"
-        >
-        <TextView
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+        <LinearLayout
+            android:id="@+id/ll"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="android"
-            android:gravity="center"
-            android:background="#E281A4"
-            />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="android"
-            android:gravity="center"
-            android:background="#E2E081"
-            />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="android"
-            android:gravity="center"
-            android:background="#E281E0"
-            />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="android"
-            android:gravity="center"
-            android:background="#E281A4"
-            />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="android"
-            android:gravity="center"
-            android:background="#E2E081"
-            />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="android"
-            android:gravity="center"
-            android:background="#E281E0"
-            /> <TextView
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="android"
-        android:gravity="center"
-        android:background="#E281A4"
-        />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="android"
-            android:gravity="center"
-            android:background="#E2E081"
-            />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="android"
-            android:gravity="center"
-            android:background="#E281E0"
-            /> <TextView
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="android"
-        android:gravity="center"
-        android:background="#E281A4"
-        />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="android"
-            android:gravity="center"
-            android:background="#E2E081"
-            />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="android"
-            android:gravity="center"
-            android:background="#E281E0"
-            /> <TextView
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="android"
-        android:gravity="center"
-        android:background="#E281A4"
-        />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="android"
-            android:gravity="center"
-            android:background="#E2E081"
-            />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="android"
-            android:gravity="center"
-            android:background="#E281E0"
-            />
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E281A4"
+                android:gravity="center"
+                android:text="android" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E2E081"
+                android:gravity="center"
+                android:text="android" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E281E0"
+                android:gravity="center"
+                android:text="android" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E281A4"
+                android:gravity="center"
+                android:text="android" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E2E081"
+                android:gravity="center"
+                android:text="android" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E281E0"
+                android:gravity="center"
+                android:text="android" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E281A4"
+                android:gravity="center"
+                android:text="android" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E2E081"
+                android:gravity="center"
+                android:text="android" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E281E0"
+                android:gravity="center"
+                android:text="android" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E281A4"
+                android:gravity="center"
+                android:text="android" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E2E081"
+                android:gravity="center"
+                android:text="android" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E281E0"
+                android:gravity="center"
+                android:text="android" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E281A4"
+                android:gravity="center"
+                android:text="android" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E2E081"
+                android:gravity="center"
+                android:text="android" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E281E0"
+                android:gravity="center"
+                android:text="android" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E2E081"
+                android:gravity="center"
+                android:text="android" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E281E0"
+                android:gravity="center"
+                android:text="android" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E281A4"
+                android:gravity="center"
+                android:text="android" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E2E081"
+                android:gravity="center"
+                android:text="android" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E281E0"
+                android:gravity="center"
+                android:text="android" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E281A4"
+                android:gravity="center"
+                android:text="android" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E2E081"
+                android:gravity="center"
+                android:text="android" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#E281E0"
+                android:gravity="center"
+                android:text="android" />
 
 
-    </LinearLayout>
+        </LinearLayout>
 
-</android.support.v4.widget.NestedScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
 
 </com.test.myscrollviewproject.SpringLayout>
