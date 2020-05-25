@@ -10,8 +10,7 @@ import android.widget.Scroller;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-    private String b="aaabbb";
-    CustomView cv;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
