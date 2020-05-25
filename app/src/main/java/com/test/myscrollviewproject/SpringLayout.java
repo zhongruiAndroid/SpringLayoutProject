@@ -11,6 +11,9 @@ import android.support.v4.view.NestedScrollingParent2;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -19,6 +22,11 @@ import android.widget.LinearLayout;
 public class SpringLayout extends ViewGroup implements NestedScrollingParent2 {
 
     private NestedScrollingParentHelper nestedScrollingParentHelper;
+    private VelocityTracker velocityTracker;
+    private int layoutLeft = -1;
+    private int layoutTop = -1;
+    private int layoutRight = -1;
+    private int layoutBottom = -1;
 
     public SpringLayout(Context context) {
         super(context);
@@ -43,8 +51,9 @@ public class SpringLayout extends ViewGroup implements NestedScrollingParent2 {
     }
 
     private void init() {
-        nestedScrollingParentHelper=new NestedScrollingParentHelper(this);
+        nestedScrollingParentHelper = new NestedScrollingParentHelper(this);
     }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int maxWidth = 0;
@@ -76,37 +85,103 @@ public class SpringLayout extends ViewGroup implements NestedScrollingParent2 {
             int height = child.getMeasuredHeight();
             int childLeft = left + paddingLeft;
             int childTop = top + paddingTop;
-            child.layout(childLeft, childTop, childLeft + width, childTop + height);
+
+            layoutLeft = childLeft;
+            layoutTop = childTop;
+            layoutRight = childLeft + width;
+            layoutBottom = childTop + height;
+            child.layout(layoutLeft, layoutTop, layoutRight, layoutBottom);
+        }
+    }
+
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        if (getChildCount() > 1 && isInEditMode()) {
+            throw new IllegalStateException("SpringLayout no more than one children");
         }
     }
 
     @Override
     public boolean onStartNestedScroll(@NonNull View child, @NonNull View target, @ViewCompat.ScrollAxis int axes, @ViewCompat.NestedScrollType int type) {
-        if(ViewCompat.SCROLL_AXIS_VERTICAL!=axes){
-            return false;
+
+        if (type == ViewCompat.TYPE_NON_TOUCH) {
+            Log.i("=====", ViewCompat.canScrollVertically(target, 1) + "=====type" + type);
+        } else {
+            Log.i("=====", ViewCompat.canScrollVertically(target, 1) + "=====type" + type);
         }
-        return !ViewCompat.canScrollVertically(target, 1);
+        //!ViewCompat.canScrollVertically(target, 1)
+        if (ViewCompat.SCROLL_AXIS_VERTICAL == axes) {
+            return true;
+        }
+        return false;
     }
 
     @Override
     public void onNestedScrollAccepted(@NonNull View child, @NonNull View target, @ViewCompat.ScrollAxis int axes, @ViewCompat.NestedScrollType int type) {
-        nestedScrollingParentHelper.onNestedScrollAccepted(child,target,axes,type);
+        nestedScrollingParentHelper.onNestedScrollAccepted(child, target, axes, type);
     }
 
     @Override
     public void onStopNestedScroll(@NonNull View target, @ViewCompat.NestedScrollType int type) {
-        nestedScrollingParentHelper.onStopNestedScroll(target,type);
+        nestedScrollingParentHelper.onStopNestedScroll(target, type);
     }
 
     @Override
     public void onNestedPreScroll(@NonNull View target, int dx, int dy, @NonNull int[] consumed, @ViewCompat.NestedScrollType int type) {
+        boolean canScrollUp = ViewCompat.canScrollVertically(target, 1);
+        if (!canScrollUp) {
 
+        }
+        if (type == ViewCompat.TYPE_NON_TOUCH) {
+
+        }
     }
+
     @Override
     public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, @ViewCompat.NestedScrollType int type) {
 
     }
 
+    @Override
+    public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
+        boolean canScrollUp = ViewCompat.canScrollVertically(target, 1);
+        if (!canScrollUp) {
+            startSpringScroll(velocityY);
+        }
+        return super.onNestedPreFling(target, velocityX, velocityY);
+    }
+
+    private void startSpringScroll(float velocityY) {
+        if (velocityY <= 0) {
+            return;
+        }
+        View childAt = getChildAt(0);
+        if (childAt == null) {
+            return;
+        }
+        if (layoutLeft == -1 && layoutTop == -1 && layoutRight == -1 && layoutBottom == -1) {
+            return;
+        }
+        SpringUtils.startSpringScroll(childAt, layoutLeft, layoutTop, layoutRight, layoutBottom, velocityY / 24000f);
+    }
+
+    @Override
+    protected boolean dispatchHoverEvent(MotionEvent event) {
+        if (velocityTracker == null) {
+            velocityTracker = VelocityTracker.obtain();
+        }
+        velocityTracker.addMovement(event);
+        return super.dispatchHoverEvent(event);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (velocityTracker != null) {
+            velocityTracker.recycle();
+        }
+    }
 
     public static class LayoutParams extends MarginLayoutParams {
         public LayoutParams(@NonNull Context c, @Nullable AttributeSet attrs) {
