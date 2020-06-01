@@ -20,7 +20,6 @@ public class CustomView extends FrameLayout {
 
     public CustomView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        context.getString(R.string.testName);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)

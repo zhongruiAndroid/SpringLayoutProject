@@ -112,6 +112,7 @@ public class ReboundScrollView extends ScrollView {
 			TranslateAnimation anim = new TranslateAnimation(0, 0, contentView.getTop(),
 					originalRect.top);
 			anim.setDuration(ANIM_TIME);
+			anim.setInterpolator(new FluidInterpolator());
 			
 			contentView.startAnimation(anim);
 			
@@ -178,6 +179,9 @@ public class ReboundScrollView extends ScrollView {
 	protected void onScrollChanged(int l, int t, int oldl, int oldt) {
 		super.onScrollChanged(l, t, oldl, oldt);
 		Log.i("=====",l+"====="+t);
+		if(true){
+			return;
+		}
 		if(t==0&&velocityTracker!=null){
 			int time=500;
 			velocityTracker.computeCurrentVelocity(time, ViewConfiguration.get(getContext()).getScaledMaximumFlingVelocity());

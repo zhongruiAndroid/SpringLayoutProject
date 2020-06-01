@@ -1,187 +1,207 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.test.myscrollviewproject.SpringLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/sl"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    >
 
-    <android.support.v4.widget.NestedScrollView
+    <com.test.myscrollviewproject.SpringLayout
+        android:id="@+id/sl"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".MainActivity">
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/ll"
+        <com.test.myscrollviewproject.Sc
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:overScrollMode="never"
+            tools:context=".MainActivity">
 
-            <TextView
+            <LinearLayout
+                android:id="@+id/ll"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E281A4"
-                android:gravity="center"
-                android:text="android" />
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+                <com.test.myscrollviewproject.TestView
+                    android:id="@+id/tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="230dp"
+                    android:layout_margin="30dp"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E281A4"
+                    android:gravity="center"
+                    android:text="android11111111111111111" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E2E081"
-                android:gravity="center"
-                android:text="android" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E2E081"
+                    android:gravity="center"
+                    android:text="android" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E281E0"
-                android:gravity="center"
-                android:text="android" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E281E0"
+                    android:gravity="center"
+                    android:text="android" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E281A4"
-                android:gravity="center"
-                android:text="android" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E281A4"
+                    android:gravity="center"
+                    android:text="android" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E2E081"
-                android:gravity="center"
-                android:text="android" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E2E081"
+                    android:gravity="center"
+                    android:text="android" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E281E0"
-                android:gravity="center"
-                android:text="android" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E281E0"
+                    android:gravity="center"
+                    android:text="android" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E281A4"
-                android:gravity="center"
-                android:text="android" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E281A4"
+                    android:gravity="center"
+                    android:text="android" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E2E081"
-                android:gravity="center"
-                android:text="android" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E2E081"
+                    android:gravity="center"
+                    android:text="android" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E281E0"
-                android:gravity="center"
-                android:text="android" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E281E0"
+                    android:gravity="center"
+                    android:text="android" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E281A4"
-                android:gravity="center"
-                android:text="android" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E281A4"
+                    android:gravity="center"
+                    android:text="android" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E2E081"
-                android:gravity="center"
-                android:text="android" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E2E081"
+                    android:gravity="center"
+                    android:text="android" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E281E0"
-                android:gravity="center"
-                android:text="android" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E281E0"
+                    android:gravity="center"
+                    android:text="android" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E281A4"
-                android:gravity="center"
-                android:text="android" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E281A4"
+                    android:gravity="center"
+                    android:text="android" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E2E081"
-                android:gravity="center"
-                android:text="android" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E2E081"
+                    android:gravity="center"
+                    android:text="android" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E281E0"
-                android:gravity="center"
-                android:text="android" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E2E081"
-                android:gravity="center"
-                android:text="android" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E281E0"
+                    android:gravity="center"
+                    android:text="android" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E2E081"
+                    android:gravity="center"
+                    android:text="android" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E281E0"
-                android:gravity="center"
-                android:text="android" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E281E0"
+                    android:gravity="center"
+                    android:text="android" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E281A4"
-                android:gravity="center"
-                android:text="android" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E281A4"
+                    android:gravity="center"
+                    android:text="android" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E2E081"
-                android:gravity="center"
-                android:text="android" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E2E081"
+                    android:gravity="center"
+                    android:text="android" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E281E0"
-                android:gravity="center"
-                android:text="android" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E281E0"
+                    android:gravity="center"
+                    android:text="android" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E281A4"
-                android:gravity="center"
-                android:text="android" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E281A4"
+                    android:gravity="center"
+                    android:text="android" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E2E081"
-                android:gravity="center"
-                android:text="android" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E2E081"
+                    android:gravity="center"
+                    android:text="android" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="#E281E0"
-                android:gravity="center"
-                android:text="android" />
-
-
-        </LinearLayout>
-
-    </android.support.v4.widget.NestedScrollView>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#E281E0"
+                    android:gravity="center"
+                    android:text="android2222222222222222" />
 
 
-</com.test.myscrollviewproject.SpringLayout>
+            </LinearLayout>
+
+        </com.test.myscrollviewproject.Sc>
+
+
+    </com.test.myscrollviewproject.SpringLayout>
+    <TextView
+        android:id="@+id/tvNotifyStr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:textColor="#ffffff"
+        />
+</FrameLayout>

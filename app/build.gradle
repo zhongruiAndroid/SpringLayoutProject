@@ -10,11 +10,39 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        flavorDimensions "1" ,"2"
+
+        resValue("string","testName","testValue")
+        buildConfigField("String","testName2","\"23\"")
+
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors{
+        apppackage{
+
+            resValue("string","testName","testValue")
+            dimension "1"
+        }
+        apptest{
+            dimension "1"
+        }
+        mode{
+            dimension "2"
+        }
+    }
+    sourceSets {
+        main {
+
+        }
+        apppackage {
+        }
+        apptest {
         }
     }
 }
@@ -26,4 +54,5 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation 'com.android.support:recyclerview-v7:28.+'
 }

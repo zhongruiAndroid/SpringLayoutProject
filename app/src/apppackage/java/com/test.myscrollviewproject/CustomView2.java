@@ -9,22 +9,21 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
-public class CustomView extends FrameLayout {
-    public CustomView(Context context) {
+public class CustomView2 extends FrameLayout {
+    public CustomView2(Context context) {
         super(context);
     }
 
-    public CustomView(Context context, @Nullable AttributeSet attrs) {
+    public CustomView2(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public CustomView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public CustomView2(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        context.getString(R.string.testName);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public CustomView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public CustomView2(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
     @Override
