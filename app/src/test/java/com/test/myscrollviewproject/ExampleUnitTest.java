@@ -20,4 +20,10 @@ public class ExampleUnitTest {
         System.out.println(aa<<4);
         System.out.println(aa*16);
     }
+    @Test
+    public void dfad() {
+        String a="abcd";
+        StringBuilder stringBuilder=new StringBuilder(a);
+        System.out.println(stringBuilder.reverse());
+    }
 }

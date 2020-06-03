@@ -35,6 +35,7 @@ public class SpringLayout extends ViewGroup implements NestedScrollingParent2 {
     private View childView;
     private float maxHeight;
 
+    private long durationTime = 550;
 
     public SpringLayout(Context context) {
         super(context);
@@ -68,8 +69,8 @@ public class SpringLayout extends ViewGroup implements NestedScrollingParent2 {
     }
 
     public float getMaxHeight() {
-        if(maxHeight<=0){
-            maxHeight=getResources().getDisplayMetrics().density*200;
+        if (maxHeight <= 0) {
+            maxHeight = getResources().getDisplayMetrics().density * 300;
         }
         return maxHeight;
     }
@@ -163,6 +164,7 @@ public class SpringLayout extends ViewGroup implements NestedScrollingParent2 {
     public NestedScrollingParentHelper getNestedScrollingParentHelper() {
         return nestedScrollingParentHelper;
     }
+
 
     private void startSpringBack(float translateY) {
         pauseAutoTranslateAnim();
@@ -263,22 +265,29 @@ public class SpringLayout extends ViewGroup implements NestedScrollingParent2 {
             return;
         }
         nestedScrollingParentHelper.onStopNestedScroll(target);
-        if(scroller!=null&&scroller.computeScrollOffset()){
+        if (scroller != null && scroller.computeScrollOffset()) {
             Log.i("=====", type + "=====onNestedFling222222isOverScrolled");
-        }else{
+        } else {
             Log.i("=====", type + "=====onNestedFling222222");
             startSpringBack(-translateYOffset);
         }
     }
 
+    @Override
+    public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
+//        checkViewIsBottom(true);
+        return super.onNestedPreFling(target, velocityX, velocityY);
+    }
 
     @Override
     public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
         boolean canScrollUp = ViewCompat.canScrollVertically(target, 1);
-        if (true) {
+        if (consumed) {
+//            checkViewIsBottom(true);
+            Log.i("=====", consumed + "=====onNestedFling11111111");
 //            startSpringScroll(velocityY);
-            scroller.fling(0, 0, 0, (int) velocityY, 0, 0, -Integer.MAX_VALUE / 100, Integer.MAX_VALUE / 100);
-            scroller.computeScrollOffset();
+//            scroller.fling(0, 0, 0, (int) velocityY, 0, 0, -Integer.MAX_VALUE / 100, Integer.MAX_VALUE / 100);
+//            scroller.computeScrollOffset();
         }
         if (!canScrollUp) {
 //            velocityTracker.computeCurrentVelocity(1000, 24000);
@@ -289,56 +298,99 @@ public class SpringLayout extends ViewGroup implements NestedScrollingParent2 {
         return super.onNestedFling(target, velocityX, velocityY, consumed);
     }
 
+    private void checkViewIsBottom(boolean continueCheck) {
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                View childAt = getChildAt(0);
+                boolean canScrollUp = ViewCompat.canScrollVertically(childAt, 1);
+                if (canScrollUp) {
+                    checkViewIsBottom(true);
+                    return;
+                }
+                velocityTracker.computeCurrentVelocity(1000, 24000);
+                float yVelocity = velocityTracker.getYVelocity() * -1;
+                float v = yVelocity / 24000f;
+                final float maxHeight = getMaxHeight() * v;
+                pauseAutoTranslateAnim();
+                Log.i("=====", v + "=====maxHeight:" + yVelocity);
+                autoTranslateAnim = ValueAnimator.ofFloat(0, -maxHeight,0);
+                autoTranslateAnim.setDuration(durationTime );
+                autoTranslateAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        float animatedValue = (float) animation.getAnimatedValue();
+                        changeTranslateY(animatedValue);
+                    }
+                });
+                autoTranslateAnim.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        /*autoTranslateAnim = ValueAnimator.ofFloat(-maxHeight, 0);
+                        autoTranslateAnim.setDuration(durationTime / 2);
+                        autoTranslateAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                            @Override
+                            public void onAnimationUpdate(ValueAnimator animation) {
+                                float animatedValue = (float) animation.getAnimatedValue();
+                                changeTranslateY(animatedValue);
+                            }
+                        });
+                        autoTranslateAnim.setInterpolator(new FluidInterpolator());
+                        autoTranslateAnim.start();*/
+                    }
+                });
+//                autoTranslateAnim.setInterpolator(new LinearInterpolator());
+//                autoTranslateAnim.setInterpolator(new FluidInterpolator());
+                autoTranslateAnim.setInterpolator(new MyBounceInterpolator());
+                autoTranslateAnim.start();
+
+            }
+        }, 10);
+    }
+
     int preY;
+
     @Override
     public void computeScroll() {
         boolean canScrollUp = ViewCompat.canScrollVertically(getChildAt(0), 1);
-        if (scroller.computeScrollOffset()&&!canScrollUp) {
+        if (scroller.computeScrollOffset() && !canScrollUp) {
             int startY = scroller.getStartY();
             int currY = scroller.getCurrY();
-            translateYOffset= translateYOffset+(currY - preY)/500;
+            Log.i("=====", currY + "=====currY:");
+            if (currY == preY && preY != 0) {
+                scroller.abortAnimation();
+                startSpringBack(-translateYOffset);
+                Log.i("=====", currY + "=====currY:1111");
+                return;
+            }
+            translateYOffset = translateYOffset + (currY - preY) / 1f;
+            preY = currY;
             changeTranslateY(-translateYOffset);
             Log.i("=====", scroller.getCurrY() + "=====computeScroll:" + translateYOffset);
 //            invalidate();
-            if(getMaxHeight()>=translateYOffset){
+            if (getMaxHeight() >= translateYOffset && scroller.getCurrVelocity() != 0) {
                 computeScroll();
-            }else{
+            } else {
+                Log.i("=====", currY + "=====currY:2222");
                 scroller.abortAnimation();
                 startSpringBack(-translateYOffset);
             }
-        }else{
+        } else {
 
         }
     }
 
 
-
-    private boolean fingerUp;
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (velocityTracker == null) {
             velocityTracker = VelocityTracker.obtain();
         }
         velocityTracker.addMovement(ev);
-        if(ev.getAction()==MotionEvent.ACTION_DOWN){
-        }
         switch (ev.getAction()){
-            case MotionEvent.ACTION_DOWN:
-                fingerUp=false;
-                pauseAutoTranslateAnim();
-            break;
-            case MotionEvent.ACTION_MOVE:
-                View childAt = getChildAt(0);
-                boolean canScroll = ViewCompat.canScrollVertically(childAt, 1);
-                if(!canScroll){
-
-                }
-                break;
             case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-                fingerUp=true;
-//                startHuiTan();
-            break;
+                checkViewIsBottom(true);
+                break;
         }
         return super.dispatchTouchEvent(ev);
     }
