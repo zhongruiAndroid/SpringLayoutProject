@@ -8,6 +8,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParent2;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
@@ -18,25 +19,30 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
+import android.widget.OverScroller;
 
 public class SpringLayout extends ViewGroup implements NestedScrollingParent2 {
 
     private NestedScrollingParentHelper nestedScrollingParentHelper;
     private VelocityTracker velocityTracker;
+    private OverScroller scroller;
     private int layoutLeft = -1;
     private int layoutTop = -1;
     private int layoutRight = -1;
     private int layoutBottom = -1;
     private ValueAnimator autoTranslateAnim;
-    private float initTranslateY;
+    private volatile float translateYOffset;
+    private View childView;
+    private float maxHeight;
+
 
     public SpringLayout(Context context) {
         super(context);
         init();
     }
 
-    public int dp2px(int value){
-        return (int) (getResources().getDisplayMetrics().density*value);
+    public int dp2px(int value) {
+        return (int) (getResources().getDisplayMetrics().density * value);
     }
 
     public SpringLayout(Context context, AttributeSet attrs) {
@@ -56,8 +62,16 @@ public class SpringLayout extends ViewGroup implements NestedScrollingParent2 {
     }
 
     private void init() {
+        scroller = new OverScroller(getContext());
         nestedScrollingParentHelper = new NestedScrollingParentHelper(this);
         setOverScrollMode(OVER_SCROLL_NEVER);
+    }
+
+    public float getMaxHeight() {
+        if(maxHeight<=0){
+            maxHeight=getResources().getDisplayMetrics().density*200;
+        }
+        return maxHeight;
     }
 
     @Override
@@ -103,7 +117,6 @@ public class SpringLayout extends ViewGroup implements NestedScrollingParent2 {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        initTranslateY = getTranslationY();
     }
 
     @Override
@@ -114,79 +127,21 @@ public class SpringLayout extends ViewGroup implements NestedScrollingParent2 {
         }
     }
 
-    @Override
-    public boolean onStartNestedScroll(@NonNull View child, @NonNull View target, @ViewCompat.ScrollAxis int axes, @ViewCompat.NestedScrollType int type) {
-        boolean b = (axes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
-        if(true){
-            return b;
-        }
-        Log.i("=====","====onStartNestedScroll="+type);
-        if (axes == ViewCompat.SCROLL_AXIS_VERTICAL&&type==ViewCompat.TYPE_TOUCH) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public void onNestedScrollAccepted(@NonNull View child, @NonNull View target, @ViewCompat.ScrollAxis int axes, @ViewCompat.NestedScrollType int type) {
-        nestedScrollingParentHelper.onNestedScrollAccepted(child, target, axes, type);
-    }
-
-    public NestedScrollingParentHelper getNestedScrollingParentHelper() {
-        return nestedScrollingParentHelper;
-    }
-
-    boolean isAnim;
-
-    private void startHuiTan() {
-        isAnim=true;
-       final View childAt = getChildAt(0);
-        float translationY = childAt.getTranslationY();
-        if(translationY-initTranslateY==0){
-            return;
-        }
-        pauseAutoTranslateAnim();
-        autoTranslateAnim = ValueAnimator.ofFloat( translationY, 0);
-        autoTranslateAnim.setDuration(400);
-        autoTranslateAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float animatedValue = (float) animation.getAnimatedValue();
-                totalTranslate-=animatedValue;
-                Log.i("=====","=====animatedValue:"+animatedValue);
-                childAt.setTranslationY(animatedValue);
-            }
-        });
-        autoTranslateAnim.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                isAnim=false;
-            }
-        });
-//        autoTranslateAnim.setInterpolator(new LinearInterpolator());
-        autoTranslateAnim.setInterpolator(new FluidInterpolator());
-        autoTranslateAnim.start();
-    }
-
-    @Override
-    public void onNestedPreScroll(@NonNull View target, int dx, int dy, @NonNull int[] consumed, @ViewCompat.NestedScrollType int type) {
-    }
-
-    boolean canSpringScroll=true;
     volatile int totalTranslate;
-    public int getMaxTranslate(){
-        int height = getHeight()/2;
-        if(height<=0){
+
+    public int getMaxTranslate() {
+        int height = getHeight() / 2;
+        if (height <= 0) {
             height = (int) (getResources().getDisplayMetrics().density * 300);
         }
-        return  height;
+        return height;
     }
+
     private ScrollListener scrollListener;
 
     public ScrollListener getScrollListener() {
-        if(scrollListener==null){
-            scrollListener=new ScrollListener() {
+        if (scrollListener == null) {
+            scrollListener = new ScrollListener() {
                 @Override
                 public void notify(String string) {
 
@@ -199,146 +154,173 @@ public class SpringLayout extends ViewGroup implements NestedScrollingParent2 {
     public void setScrollListener(ScrollListener scrollListener) {
         this.scrollListener = scrollListener;
     }
+
     @Override
-    public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, @ViewCompat.NestedScrollType int type) {
+    public void onNestedScrollAccepted(@NonNull View child, @NonNull View target, @ViewCompat.ScrollAxis int axes, int type) {
+        nestedScrollingParentHelper.onNestedScrollAccepted(child, target, axes);
+    }
+
+    public NestedScrollingParentHelper getNestedScrollingParentHelper() {
+        return nestedScrollingParentHelper;
+    }
+
+    private void startSpringBack(float translateY) {
+        pauseAutoTranslateAnim();
+        autoTranslateAnim = ValueAnimator.ofFloat(translateY, 0);
+        autoTranslateAnim.setDuration(400);
+        autoTranslateAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float animatedValue = (float) animation.getAnimatedValue();
+                //正数translateYOffset对应负数translateY;
+                translateYOffset = -animatedValue;
+                Log.i("=====", "=====animatedValue:" + animatedValue);
+                changeTranslateY(animatedValue);
+            }
+        });
+        autoTranslateAnim.setInterpolator(new FluidInterpolator());
+        autoTranslateAnim.start();
+    }
+
+    @Override
+    public boolean onStartNestedScroll(@NonNull View child, @NonNull View target, @ViewCompat.ScrollAxis int axes, int type) {
+        boolean b = (axes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0 && type == ViewCompat.TYPE_TOUCH;
+        Log.i("=====", type + "====onStartNestedScroll=" + b);
+        if (true) {
+            return b;
+        }
+        Log.i("=====", "====onStartNestedScroll=" + type);
+        if (axes == ViewCompat.SCROLL_AXIS_VERTICAL && type == ViewCompat.TYPE_TOUCH) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void onNestedPreScroll(@NonNull View target, int dx, int dy, @NonNull int[] consumed, int type) {
+        if (dy < 0 && translateYOffset > 0) {
+            //内容上滑动之后不松手，此时内容下滑动的逻辑处理
+            translateYOffset += dy;
+            if (translateYOffset < 0) {
+                consumed[1] = (int) (translateYOffset + 0.5f);
+                translateYOffset = 0;
+            } else {
+                consumed[1] = dy;
+            }
+            changeTranslateY(-translateYOffset);
+            return;
+        }
+        if (dy > 0 && translateYOffset < 0) {
+            //内容下滑动之后不松手，此时内容上滑动的逻辑处理
+            translateYOffset += dy;
+            if (translateYOffset > 0) {
+                consumed[1] = Math.abs((int) (translateYOffset - 0.5f));
+                translateYOffset = 0;
+            } else {
+                consumed[1] = dy;
+            }
+            changeTranslateY(-translateYOffset);
+            return;
+        }
+    }
+
+    /*移动子view视图*/
+    private void changeTranslateY(float translateY) {
+        if (childView == null) {
+            childView = getChildAt(0);
+            if (childView == null) {
+                return;
+            }
+        }
+        childView.setTranslationY(translateY);
+    }
+
+    @Override
+    public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
         /*boolean canScrollUp = ViewCompat.canScrollVertically(target, 1);
         if (canSpringScroll&&!canScrollUp&&type==ViewCompat.TYPE_NON_TOUCH) {
             canSpringScroll=false;
             velocityTracker.computeCurrentVelocity(1000,2400);
             startSpringScroll(velocityTracker.getYVelocity()*-1);
         }*/
-        if(dyUnconsumed<=0||type==ViewCompat.TYPE_NON_TOUCH){
+        if (type == ViewCompat.TYPE_NON_TOUCH) {
+//            return;
+        }
+        Log.i("=====", type + "=====onNestedScroll");
+        float tempLength = dyUnconsumed / 2f;
+        if (tempLength == 0) {
             return;
         }
         pauseAutoTranslateAnim();
-        Log.i("=====","=====dyUnconsumed:"+dyUnconsumed);
-        View childAt = getChildAt(0);
-       /* if(totalTranslate>getMaxTranslate()){
-            getScrollListener().notify(totalTranslate+"划不动"+getMaxTranslate());
-            return;
-        }*/
-        int tempLength = dyUnconsumed / 2;
-        getScrollListener().notify(tempLength+"===="+totalTranslate);
-        totalTranslate-=tempLength;
-        childAt.setTranslationY(initTranslateY+totalTranslate);
-    }
-    @Override
-    public void onStopNestedScroll(@NonNull View target, @ViewCompat.NestedScrollType int type) {
-        nestedScrollingParentHelper.onStopNestedScroll(target, type);
-        Log.i("=====","=====onStopNestedScrollxxyy:"+type);
-        /*if(!fingerUp ||type==ViewCompat.TYPE_NON_TOUCH){
-            return;
-        }*/
-        totalTranslate=0;
-//        Log.i("=====","=====onStopNestedScroll:"+type);
-        Log.i("=====","=====onStopNestedScrollxxss:"+type);
-        startHuiTan();
-    }
-    /*@Override
-    public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
-        boolean canScrollUp = ViewCompat.canScrollVertically(target, 1);
-        if (!canScrollUp) {
-//            startSpringScroll(velocityY);
-        }
-        return super.onNestedFling(target, velocityX, velocityY, consumed);
+        translateYOffset += tempLength;
+        changeTranslateY(-translateYOffset);
     }
 
     @Override
-    public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
+    public void onStopNestedScroll(@NonNull View target, int type) {
+        if (type == ViewCompat.TYPE_NON_TOUCH) {
+            return;
+        }
+        nestedScrollingParentHelper.onStopNestedScroll(target);
+        if(scroller!=null&&scroller.computeScrollOffset()){
+            Log.i("=====", type + "=====onNestedFling222222isOverScrolled");
+        }else{
+            Log.i("=====", type + "=====onNestedFling222222");
+            startSpringBack(-translateYOffset);
+        }
+    }
+
+
+    @Override
+    public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
         boolean canScrollUp = ViewCompat.canScrollVertically(target, 1);
-        if (canSpringScroll&&!canScrollUp*//*&&type==ViewCompat.TYPE_NON_TOUCH*//*) {
-            canSpringScroll=false;
-            velocityTracker.computeCurrentVelocity(1000,24000);
+        if (true) {
+//            startSpringScroll(velocityY);
+            scroller.fling(0, 0, 0, (int) velocityY, 0, 0, -Integer.MAX_VALUE / 100, Integer.MAX_VALUE / 100);
+            scroller.computeScrollOffset();
+        }
+        if (!canScrollUp) {
+//            velocityTracker.computeCurrentVelocity(1000, 24000);
 //            startSpringScroll(velocityTracker.getYVelocity()*-1);
 
 //            return true;
         }
-        return super.onNestedPreFling(target, velocityX, velocityY);
-    }*/
-
-    private void startSpringScroll(float velocityY) {
-        if (velocityY <= 0) {
-//            canSpringScroll=false;
-            return;
-        }
-        final  View childAt = getChildAt(0);
-        if (childAt == null) {
-//            canSpringScroll=false;
-            return;
-        }
-        if (layoutLeft == -1 && layoutTop == -1 && layoutRight == -1 && layoutBottom == -1) {
-//            canSpringScroll=false;
-            return;
-        }
-//        SpringUtils.startSpringScroll(childAt, layoutLeft, layoutTop, layoutRight, layoutBottom, velocityY / 24000f);
-
-        float maxLength = getResources().getDisplayMetrics().density * 120;
-        int resultLength= (int) (maxLength*velocityY / 24000f);
-        if(resultLength<=0){
-//            canSpringScroll=false;
-            return;
-        }
-        Log.i("=====","=====ValueAnimator");
-        ValueAnimator valueAnimator = ValueAnimator.ofInt(0, resultLength, 0);
-        valueAnimator.setDuration(400);
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                int animatedValue = (int) animation.getAnimatedValue();
-                if (childAt == null) {
-                    return;
-                }
-                childAt.layout(layoutLeft, layoutTop-animatedValue, layoutRight, layoutBottom-animatedValue);
-            }
-        });
-        valueAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-            }
-        });
-        valueAnimator.setInterpolator(new FluidInterpolator());
-        valueAnimator.start();
+        return super.onNestedFling(target, velocityX, velocityY, consumed);
     }
-    private void startSpringScroll2( ) {
 
-        final  View childAt = getChildAt(0);
-
-
-        Log.i("=====","=====ValueAnimator");
-        ValueAnimator valueAnimator = ValueAnimator.ofInt((int) childAt.getTranslationY(), 0);
-        valueAnimator.setDuration(400);
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                int animatedValue = (int) animation.getAnimatedValue();
-                if (childAt == null) {
-                    return;
-                }
-                childAt.setTranslationY(animatedValue);
+    int preY;
+    @Override
+    public void computeScroll() {
+        boolean canScrollUp = ViewCompat.canScrollVertically(getChildAt(0), 1);
+        if (scroller.computeScrollOffset()&&!canScrollUp) {
+            int startY = scroller.getStartY();
+            int currY = scroller.getCurrY();
+            translateYOffset= translateYOffset+(currY - preY)/500;
+            changeTranslateY(-translateYOffset);
+            Log.i("=====", scroller.getCurrY() + "=====computeScroll:" + translateYOffset);
+//            invalidate();
+            if(getMaxHeight()>=translateYOffset){
+                computeScroll();
+            }else{
+                scroller.abortAnimation();
+                startSpringBack(-translateYOffset);
             }
-        });
-        valueAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                totalTranslate=0;
-                Log.i("=====","=====totalTranslate"+totalTranslate);
-            }
-        });
-        valueAnimator.setInterpolator(new LinearInterpolator());
-        valueAnimator.start();
+        }else{
+
+        }
     }
+
+
+
     private boolean fingerUp;
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if(true){
-            return super.dispatchTouchEvent(ev);
-        }
         if (velocityTracker == null) {
             velocityTracker = VelocityTracker.obtain();
         }
         velocityTracker.addMovement(ev);
         if(ev.getAction()==MotionEvent.ACTION_DOWN){
-            canSpringScroll=true;
         }
         switch (ev.getAction()){
             case MotionEvent.ACTION_DOWN:
@@ -355,16 +337,15 @@ public class SpringLayout extends ViewGroup implements NestedScrollingParent2 {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 fingerUp=true;
-                startHuiTan();
+//                startHuiTan();
             break;
         }
         return super.dispatchTouchEvent(ev);
     }
 
 
-
     private void pauseAutoTranslateAnim() {
-        if(autoTranslateAnim==null){
+        if (autoTranslateAnim == null) {
             return;
         }
         autoTranslateAnim.cancel();
