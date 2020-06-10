@@ -339,9 +339,9 @@ public class SpringLayout extends ViewGroup implements NestedScrollingParent2 {
                         autoTranslateAnim.start();*/
                     }
                 });
-//                autoTranslateAnim.setInterpolator(new LinearInterpolator());
+                autoTranslateAnim.setInterpolator(new LinearInterpolator());
 //                autoTranslateAnim.setInterpolator(new FluidInterpolator());
-                autoTranslateAnim.setInterpolator(new MyBounceInterpolator());
+//                autoTranslateAnim.setInterpolator(new MyBounceInterpolator());
                 autoTranslateAnim.start();
 
             }
