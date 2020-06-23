@@ -282,6 +282,7 @@ public class SpringLayout extends ViewGroup implements NestedScrollingParent2 {
     @Override
     public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
         boolean canScrollUp = ViewCompat.canScrollVertically(target, 1);
+        Log.i("=====", consumed + "=====onNestedFling11111111");
         if (consumed) {
 //            checkViewIsBottom(true);
             Log.i("=====", consumed + "=====onNestedFling11111111");
@@ -299,7 +300,7 @@ public class SpringLayout extends ViewGroup implements NestedScrollingParent2 {
     }
 
     private void checkViewIsBottom(boolean continueCheck) {
-        postDelayed(new Runnable() {
+        post(new Runnable() {
             @Override
             public void run() {
                 View childAt = getChildAt(0);
@@ -308,44 +309,19 @@ public class SpringLayout extends ViewGroup implements NestedScrollingParent2 {
                     checkViewIsBottom(true);
                     return;
                 }
-                velocityTracker.computeCurrentVelocity(1000, 24000);
-                float yVelocity = velocityTracker.getYVelocity() * -1;
+                velocityTracker.computeCurrentVelocity(1000, 24000f);
+                float yVelocity = velocityTracker.getYVelocity();
+                velocityTracker.clear();
+                if(Math.abs(yVelocity)<=3000){
+                    return;
+                }
                 float v = yVelocity / 24000f;
+                Log.i("=====","=====yVelocity:"+yVelocity);
                 final float maxHeight = getMaxHeight() * v;
-                pauseAutoTranslateAnim();
-                Log.i("=====", v + "=====maxHeight:" + yVelocity);
-                autoTranslateAnim = ValueAnimator.ofFloat(0, -maxHeight,0);
-                autoTranslateAnim.setDuration(durationTime );
-                autoTranslateAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        float animatedValue = (float) animation.getAnimatedValue();
-                        changeTranslateY(animatedValue);
-                    }
-                });
-                autoTranslateAnim.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        /*autoTranslateAnim = ValueAnimator.ofFloat(-maxHeight, 0);
-                        autoTranslateAnim.setDuration(durationTime / 2);
-                        autoTranslateAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                            @Override
-                            public void onAnimationUpdate(ValueAnimator animation) {
-                                float animatedValue = (float) animation.getAnimatedValue();
-                                changeTranslateY(animatedValue);
-                            }
-                        });
-                        autoTranslateAnim.setInterpolator(new FluidInterpolator());
-                        autoTranslateAnim.start();*/
-                    }
-                });
-                autoTranslateAnim.setInterpolator(new LinearInterpolator());
-//                autoTranslateAnim.setInterpolator(new FluidInterpolator());
-//                autoTranslateAnim.setInterpolator(new MyBounceInterpolator());
-                autoTranslateAnim.start();
-
+//                pauseAutoTranslateAnim();
+                SpringUtils.startAutoSpringAnim(childAt, yVelocity);
             }
-        }, 10);
+        });
     }
 
     int preY;
@@ -383,13 +359,26 @@ public class SpringLayout extends ViewGroup implements NestedScrollingParent2 {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (velocityTracker == null) {
-            velocityTracker = VelocityTracker.obtain();
-        }
-        velocityTracker.addMovement(ev);
-        switch (ev.getAction()){
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                if (velocityTracker == null) {
+                    velocityTracker = VelocityTracker.obtain();
+                } else {
+                    velocityTracker.clear();
+                }
+                velocityTracker.addMovement(ev);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                velocityTracker.addMovement(ev);
+//                velocityTracker.computeCurrentVelocity(1000);
+                break;
             case MotionEvent.ACTION_UP:
-                checkViewIsBottom(true);
+            case MotionEvent.ACTION_CANCEL:
+                if (translateYOffset == 0) {
+                    checkViewIsBottom(true);
+                }else{
+                    velocityTracker.clear();
+                }
                 break;
         }
         return super.dispatchTouchEvent(ev);

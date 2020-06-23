@@ -1,6 +1,9 @@
 package com.test.myscrollviewproject;
 
 import android.animation.ValueAnimator;
+import android.support.animation.DynamicAnimation;
+import android.support.animation.SpringAnimation;
+import android.support.animation.SpringForce;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
@@ -41,5 +44,16 @@ class SpringUtils {
             x = start + x * (1.0f - start);
         }
         return x;
+    }
+
+    public static void startAutoSpringAnim(View view,float yVelocity){
+        if(view==null){
+            return;
+        }
+        float translationY = view.getTranslationY();
+        SpringAnimation springAnimation=new SpringAnimation(view, DynamicAnimation.TRANSLATION_Y,translationY);
+        springAnimation.getSpring().setDampingRatio(SpringForce.DAMPING_RATIO_NO_BOUNCY).setStiffness(SpringForce.STIFFNESS_LOW);
+        springAnimation.setStartVelocity(yVelocity);
+        springAnimation.start();
     }
 }
